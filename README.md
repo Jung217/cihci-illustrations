@@ -19,13 +19,12 @@
 
 - 純白背景，不要紙紋、米色、陰影、漸層
 - 黑色手繪線稿，細線，輕微抖動
-- 大量留白，主體只占畫面約 40%–60%
-- 少量紅色、橙色、深藍色正體中文手寫批註
+- 大量留白，少量紅色、橙色、深藍色正體中文手寫批註
 - 一張圖只表達一個核心動作、結構、狀態或隱喻
 - CIHCI 醬必須參與核心動作，不能只是裝飾
 - 有創意、清爽，但不幼稚、不賣萌
 
-> 批註的藍必須是深藍 `#015DA0`，不要用亮青藍——亮青藍是 CIHCI 醬身體的顏色，撞色會讓人分不清哪個是角色、哪個是註解。
+> 批註的藍必須是深藍 `#015DA0`，不要用亮青藍，亮青藍是 CIHCI 醬身體的顏色，撞色會讓人分不清哪個是角色、哪個是註解。
 
 ## 模式
 
@@ -55,42 +54,33 @@ But not：
 ## Example
 > 五張涵蓋四種比例與兩種模式，內容彼此不重複。
 
-### 卡住的不是方法，是資料
+* ### 卡住的不是方法，是資料
+    > 正文模式 · 16:9 · 概念隱喻
+    
+    ![卡住的不是方法，是資料](assets/examples/01-data-bottleneck.png)
 
-正文模式 · 16:9 · 概念隱喻
+* ### 標註品質決定天花板
+    > 正文模式 · 1:1 · 角色狀態
 
-![卡住的不是方法，是資料](assets/examples/01-data-bottleneck.png)
+    ![標註品質決定天花板](assets/examples/02-label-noise.png)
 
-### 標註品質決定天花板
+* ### 方法架構：只有一層真的動過
+    > 學術圖解模式 · 3:2 · 方法架構
 
-正文模式 · 1:1 · 角色狀態
+    ![方法架構](assets/examples/03-method-architecture.png)
 
-![標註品質決定天花板](assets/examples/02-label-noise.png)
+* ### 消融實驗：拿掉哪一項，掉最多
+    > 學術圖解模式 · 4:3 · 實驗設計
 
-### 方法架構：只有一層真的動過
+    ![消融實驗](assets/examples/04-ablation.png)
 
-學術圖解模式 · 3:2 · 方法架構
+* ### 本方法與基準線的差別只在一個開關
+    > 學術圖解模式 · 3:2 · 結果對照
 
-![方法架構](assets/examples/03-method-architecture.png)
-
-### 消融實驗：拿掉哪一項，掉最多
-
-學術圖解模式 · 4:3 · 實驗設計
-
-![消融實驗](assets/examples/04-ablation.png)
-
-### 本方法與基準線的差別只在一個開關
-
-學術圖解模式 · 3:2 · 結果對照
-
-![結果對照](assets/examples/05-baseline-compare.png)
-
-> 範例圖只是構圖範本，使用時應該從當前內容重新定義隱喻，不要照抄。
+    ![結果對照](assets/examples/05-baseline-compare.png)
 
 ### 這幾張怎麼生的
-
-技能本身把生圖交給代理內建的 `image_gen`。上面這五張是用倉庫裡的 `tools/generate_examples.py` 生的——那支腳本是給「手邊沒有內建生圖工具、但有 OpenAI 金鑰」的情況用的離線補救：
-
+> 技能本身把生圖交給代理內建的 `image_gen`。上面這五張是用倉庫裡的 `tools/generate_examples.py` 生的——那支腳本是給「手邊沒有內建生圖工具、但有 OpenAI 金鑰」的情況用的離線補救：
 ```bash
 export OPENAI_API_KEY=...
 python tools/generate_examples.py            # 全部五張
@@ -100,15 +90,6 @@ python tools/generate_examples.py --list     # 只看 shot list，不呼叫 API
 python tools/generate_model_sheet.py         # 角色設定圖
 ```
 
-### 生成的 TMI
-* 照 `references/prompt-template.md` 組提示詞，並把 `assets/ip/cihci.png` 當參考圖一起送出。實測**純文字描述撐不住 CIHCI 醬的外形**，會在「明確交叉的 X」和「寬扁緞帶比例」之間來回走鐘，加參考圖才穩得住。
-
-* 腳本沒有自動重生：它只保證單張 API 失敗不中斷整批。品質要照 `references/qa-checklist.md` 人工看過，不合格再 `--only` 重跑該張。
-
-* 兩支腳本都預設 `gpt-image-2`，可以用 `--model` 換掉，但**建議別換**。實測 `gpt-image-1.5` 會把色塊畫成蠟筆質感，而且同一張圖就寫錯三個中文字；`gpt-image-2` 連跑七版一個錯字都沒有。這套配圖每張都要寫中文批註，中文手寫的準確度是選模型的第一順位。
-
-* 提示詞裡要明講色塊是 **solid**（平塗、邊到邊同色、無紋理無深淺）。不強調的話模型會自己加筆觸或漸層，違反 `style-dna.md`。
-
 ## 安裝
 
 克隆倉庫：
@@ -117,39 +98,32 @@ python tools/generate_model_sheet.py         # 角色設定圖
 git clone https://github.com/Jung217/cihci-illustrations.git
 cd cihci-illustrations
 ```
-
-倉庫根目錄本身就是技能——`SKILL.md`、`references/`、`assets/` 都在根層，整個複製過去即可。README、LICENSE、NOTICE、`tools/`、`PROMPTS.md` 會一起被複製，但技能只讀 `SKILL.md` 和它引用的檔案，不影響運作。
+> 倉庫根目錄本身就是技能——`SKILL.md`、`references/`、`assets/` 都在根層，整個複製過去即可。README、LICENSE、NOTICE、`tools/`、`PROMPTS.md` 會一起被複製，但技能只讀 `SKILL.md` 和它引用的檔案，不影響運作。
 
 ### Claude Code
-
 ```bash
 mkdir -p ~/.claude/skills
 cp -R . ~/.claude/skills/cihci-illustrations
 ```
-
-安裝後直接描述任務即可觸發，或用 `/cihci-illustrations`。
+> 安裝後直接描述任務即可觸發，或用 `/cihci-illustrations`。
 
 ### Codex
-
 ```bash
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
 cp -R . "${CODEX_HOME:-$HOME/.codex}/skills/cihci-illustrations"
 ```
 
 安裝後：
-
 ```text
 Use $cihci-illustrations 為這篇文章設計並生成 5 張 CIHCI 醬荒誕配圖。
 ```
-
-目標資料夾名稱必須是 `cihci-illustrations`，要跟 `SKILL.md` 裡的 `name:` 一致。
+> 目標資料夾名稱必須是 `cihci-illustrations`，要跟 `SKILL.md` 裡的 `name:` 一致。
 
 ### 其他 agents
-
-> Skill本體是純 Markdown，沒有相依套件。把整個倉庫放進該 agnet 的 skills，或直接把 `SKILL.md` 與 `references/` 餵給它即可。
+> Skill 本體是純 Markdown，沒有相依套件。把整個倉庫放進該 agent 的 skills，或直接把 `SKILL.md` 與 `references/` 餵給它即可。
 
 ## 怎麼用
-
+> 範例圖只是構圖範本，使用時應該從當前內容重新定義隱喻，不要照抄。
 ### 只做配圖規劃
 
 ```text
@@ -178,18 +152,9 @@ CIHCI 醬要站在其中一個模組裡動手調整。
 
 <貼上 method 段落>
 ```
-
-### 修 CIHCI 醬走形
-
-```text
-這張圖裡的 CIHCI 醬走形了，綠色重疊區不見了。
-請只重畫 CIHCI 醬，保住三個識別要件。構圖和其他線稿不要動。
-```
-
-更多範例見 [PROMPTS.md](PROMPTS.md)。
+> 更多範例見 [PROMPTS.md](PROMPTS.md)。
 
 ## 工作流程
-
 1. 讀取文章、Markdown、論文草稿、擷圖或使用者給的主題
 2. 判斷用正文模式還是學術圖解模式，決定比例
 3. 提煉核心觀點、認知轉折、方法結構和適合視覺化的段落
@@ -230,19 +195,26 @@ CIHCI 醬要站在其中一個模組裡動手調整。
 └── NOTICE.md
 ```
 
-## 注意事項
-
-- 圖裡的中文字越短越穩定。
-- 每張圖只講一個核心結構，不要把內容做成說明書。
-- CIHCI 醬必須承擔核心動作；如果拿掉它畫面仍然完全成立，代表它太裝飾了。
-- CIHCI 醬容易走形，尤其是綠色重疊區和三個深藍方塊常常掉。生成後一定要檢查三要件。
-- 生圖時若能附參考圖，把 `assets/ip/cihci.png` 一起餵進去，辨識度會穩很多。
-- 不要餵含字版 `cihcilab.png`，否則圖裡會冒出「CIHCI LAB」字樣。
-- AI 圖像模型可能寫出簡體字，生成後要檢查。錯字嚴重時優先減少批註數量並重生成。
-- 一批圖之間容易撞隱喻，生第二張以前先回頭看前面用過什麼物件和動作。
+## 生成時的 TMI
+### 寫提示詞的時候
+- 照 references/prompt-template.md 組提示詞，並把 assets/ip/cihci.png 當參考圖一起送出。實測純文字描述撐不住 CIHCI 醬的外形，會在「明確交叉的 X」和「寬扁緞帶比例」之間來回走鐘，加參考圖才穩得住。
+- 不要餵含字版 cihcilab.png，否則圖裡會冒出「CIHCI LAB」字樣。
+- 明講色塊是 solid（平塗、邊到邊同色、無紋理無深淺）。不強調的話模型會自己加筆觸或漸層，違反 style-dna.md。
+- 圖裡的中文字越短越穩定；一張圖只講一個核心結構，不要把內容做成說明書。
+- CIHCI 醬必須承擔核心動作。如果拿掉它畫面仍然完全成立，代表它太裝飾了。
 - 描述 CIHCI 醬的手腳時字要少。寫得越細，模型就把牠畫得越大、擠掉場景——手指、肘關節、腳掌這些細節根本畫不進一個小角色裡。
-- 不要在提示詞裡規定角色占畫面的百分比。實測寫「20–25%」得到 16.6%、寫「主物件的四成」得到 13.5%、完全不寫反而落在 24%。提了就縮，不提最準。
-- 視線能不能離開瞳孔中心是穩的，**指向哪個方向不受控**。笑點靠視線的圖要生完檢查，不要靠加字硬凹。
+- 不要規定角色占畫面的百分比。實測寫「20–25%」得到 16.6%、寫「主物件的四成」得到 13.5%、完全不寫反而落在 24%。提了就縮，不提最準。
+
+### 選模型與跑腳本
+- 兩支腳本都預設 gpt-image-2，可以用 --model 換掉，但建議別換。實測 gpt-image-1.5 會把色塊畫成蠟筆質感，而且同一張圖就寫錯三個中文字；gpt-image-2
+連跑七版一個錯字都沒有。這套配圖每張都要寫中文批註，中文手寫的準確度是選模型的第一順位。
+- 腳本沒有自動重生：它只保證單張 API 失敗不中斷整批。品質要照 references/qa-checklist.md 人工看過，不合格再 --only 重跑該張。
+
+### 生成後一定要看
+- CIHCI 醬容易走鐘，尤其是綠色重疊區和三個深藍方塊常常掉，每張都要檢查三要件。
+- AI 圖像模型可能寫出簡體字。錯字嚴重時優先減少批註數量再重生成。
+- 視線能不能離開瞳孔中心是穩的，指向哪個方向不受控。笑點靠視線的圖要生完檢查，不要靠加字硬凹。
+- 一批圖之間容易撞隱喻，生第二張以前先回頭看前面用過什麼物件和動作。
 
 ## Reference
 > 本專案改編自 [Ian Xiaohei Illustrations](https://github.com/helloianneo/ian-xiaohei-illustrations)，改動內容與 IP 歸屬見 [NOTICE.md](NOTICE.md)。

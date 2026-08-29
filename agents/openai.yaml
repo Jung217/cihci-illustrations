@@ -1,0 +1,6 @@
+interface:
+  display_name: "CIHCI 配圖"
+  short_description: "為 CIHCI Lab 的文章、貼文、論文與簡報生成荒誕清爽、有 CIHCI 醬 IP 的手繪配圖"
+  default_prompt: "Use $cihci-illustrations 為這份內容設計並生成幾張 CIHCI 醬荒誕手繪配圖。"
+policy:
+  allow_implicit_invocation: true

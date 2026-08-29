@@ -1,0 +1,18 @@
+.DS_Store
+Thumbs.db
+
+# 本機生成輸出
+generated/
+outputs/
+dist/
+
+# 本機編輯器檔案
+.idea/
+.vscode/
+
+# 紀錄檔
+*.log
+
+# Python
+__pycache__/
+*.pyc

@@ -1,6 +1,6 @@
 {
   "name": "cihci-illustrations",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "生成 CIHCI Lab 風格的正體中文配圖：純白手繪、大量留白、CIHCI 醬 IP 承擔核心動作，支援怪誕正文與學術圖解兩種模式。",
   "agent-skills": {
     "version": "1"

@@ -18,18 +18,29 @@
 from __future__ import annotations
 
 import argparse
-import base64
-import json
-import os
 import sys
 import urllib.error
-import urllib.request
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from generate_examples import ENDPOINT, REF_IMAGE, REPO, _multipart  # noqa: E402
+from image_api import (
+    DEFAULT_MODEL,
+    EXIT_BAD_USAGE,
+    EXIT_FAILURE,
+    EXIT_OK,
+    QUALITY_CHOICES,
+    REF_IMAGE,
+    REPO,
+    MissingApiKey,
+    display_path,
+    enable_utf8_output,
+    http_error_detail,
+    request_image,
+    require_api_key,
+    save_image,
+)
 
 OUT = REPO / "assets" / "ip" / "cihci-chan-model-sheet.png"
+SHEET_SIZE = "1536x1024"
 
 PROMPT = """Generate one 3:2 horizontal character model sheet on a pure white background.
 
@@ -82,51 +93,44 @@ LAYOUT - four zones, clearly separated by white space, no boxes drawn around the
 Do not write a title anywhere on the sheet. Do not render the words "CIHCI LAB" or any English text. Do not number the zones. Keep at least a third of the sheet as empty white paper."""
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="產生 CIHCI 醬角色設定圖")
+    parser.add_argument("--quality", default="high", choices=QUALITY_CHOICES)
+    parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--out", type=Path, default=OUT)
+    return parser.parse_args()
+
+
 def main() -> int:
-    ap = argparse.ArgumentParser(description="產生 CIHCI 醬角色設定圖")
-    ap.add_argument("--quality", default="high", choices=["low", "medium", "high"])
-    ap.add_argument("--model", default="gpt-image-2")
-    ap.add_argument("--out", type=Path, default=OUT)
-    args = ap.parse_args()
+    enable_utf8_output()
+    args = parse_args()
 
-    if hasattr(sys.stdout, "reconfigure"):
-        sys.stdout.reconfigure(encoding="utf-8")
-    if not os.environ.get("OPENAI_API_KEY"):
-        print("缺少 OPENAI_API_KEY 環境變數。", file=sys.stderr)
-        return 2
-
-    fields = {
-        "model": args.model,
-        "prompt": PROMPT,
-        "size": "1536x1024",
-        "quality": args.quality,
-        "n": "1",
-    }
-    body, boundary = _multipart(fields, [("image[]", REF_IMAGE)])
-    req = urllib.request.Request(
-        ENDPOINT,
-        data=body,
-        headers={
-            "Authorization": f"Bearer {os.environ['OPENAI_API_KEY']}",
-            "Content-Type": f"multipart/form-data; boundary={boundary}",
-        },
-    )
     try:
-        with urllib.request.urlopen(req, timeout=600) as resp:
-            payload = json.load(resp)
+        api_key = require_api_key()
+    except MissingApiKey as exc:
+        print(exc, file=sys.stderr)
+        return EXIT_BAD_USAGE
+
+    try:
+        image = request_image(
+            prompt=PROMPT,
+            size=SHEET_SIZE,
+            quality=args.quality,
+            model=args.model,
+            reference_image=REF_IMAGE,
+            api_key=api_key,
+        )
     except urllib.error.HTTPError as exc:
-        print(f"HTTP {exc.code}: {exc.read().decode()[:400]}", file=sys.stderr)
-        return 1
+        print(http_error_detail(exc), file=sys.stderr)
+        return EXIT_FAILURE
+    except urllib.error.URLError as exc:
+        print(f"連線失敗：{exc.reason}", file=sys.stderr)
+        return EXIT_FAILURE
 
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_bytes(base64.b64decode(payload["data"][0]["b64_json"]))
-    try:
-        shown = args.out.relative_to(REPO)
-    except ValueError:
-        shown = args.out
-    print(f"OK  {shown}  {args.out.stat().st_size // 1024} KB")
+    save_image(image, args.out)
+    print(f"OK  {display_path(args.out)}  {image.size_in_kib} KB")
     print("請對照 references/cihci-ip.md 檢查三要件、描邊完整度與中文字。")
-    return 0
+    return EXIT_OK
 
 
 if __name__ == "__main__":

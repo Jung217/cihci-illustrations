@@ -187,6 +187,7 @@ CIHCI 醬要站在其中一個模組裡動手調整。
 │   │   └── cihci-chan-model-sheet.png  # 角色設定圖
 │   └── examples/           # 產出的配圖，兼作風格校準樣本
 ├── tools/                  # 離線生圖腳本，非技能的一部分
+│   ├── image_api.py        # 兩支腳本共用的 OpenAI 影像 API
 │   ├── generate_examples.py
 │   └── generate_model_sheet.py
 ├── PROMPTS.md              # 提示詞範例

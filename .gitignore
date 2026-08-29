@@ -1,6 +1,12 @@
 .DS_Store
 Thumbs.db
 
+# 代理技能：npx skills add 裝進來的內容
+# skills-lock.json 要進版控，靠它以 npx skills experimental_install 還原
+.agents/
+.claude/
+skills-lock.json
+
 # 本機生成輸出
 generated/
 outputs/
@@ -16,3 +22,4 @@ dist/
 # Python
 __pycache__/
 *.pyc
+.ruff_cache/
